@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare ( strict_types = 1 );
 
 namespace MamadouAlySy;
 
@@ -9,7 +9,7 @@ class Query
     protected string $sql;
     protected array $parameters;
 
-    public function __construct(string $sql, array $parameters = [])
+    public function __construct( string $sql, array $parameters = [] )
     {
         $this->sql = $sql;
         $this->parameters = $parameters;
@@ -32,7 +32,7 @@ class Query
      *
      * @return self
      */
-    public function setParameters(array $parameters): self
+    public function setParameters( array $parameters ): self
     {
         $this->parameters = $parameters;
 
@@ -56,7 +56,7 @@ class Query
      *
      * @return self
      */
-    public function setSql(string $sql): self
+    public function setSql( string $sql ): self
     {
         $this->sql = $sql;
 

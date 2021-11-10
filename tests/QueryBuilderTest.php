@@ -2,6 +2,7 @@
 
 namespace MamadouAlySy\Tests;
 
+use MamadouAlySy\Connection;
 use MamadouAlySy\Exceptions\QueryBuilderException;
 use MamadouAlySy\QueryBuilder;
 use PHPUnit\Framework\TestCase;
@@ -16,16 +17,20 @@ class QueryBuilderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->queryBuilder = new QueryBuilder(new Connection);
-        $this->queryBuilder->drop()->table('user')->commit();
+        $credentials = [
+            'dsn' => 'sqlite:sqlite3.db',
+            'user' => '',
+            'password' => '',
+        ];
+        $this->queryBuilder = new QueryBuilder( new Connection( $credentials ) );
+        $this->queryBuilder->drop()->table( 'user' )->commit();
     }
-    
 
     public function testInsertQuery()
     {
         $query = $this->queryBuilder
-            ->insert(['name' => 'Mamadou', 'age' => 23])
-            ->into('user')
+            ->insert( ['name' => 'Mamadou', 'age' => 23] )
+            ->into( 'user' )
             ->getQuery();
 
         $this->assertEquals(
@@ -37,32 +42,32 @@ class QueryBuilderTest extends TestCase
     public function testSimpleSelectQueryWithoutConditions()
     {
         $query = $this->queryBuilder
-            ->from('user')
+            ->from( 'user' )
             ->select()
             ->everything()
             ->getQuery();
 
-        $this->assertEquals('SELECT * FROM `user`;', $query->getSql());
+        $this->assertEquals( 'SELECT * FROM `user`;', $query->getSql() );
     }
 
     public function testSimpleSelectQueryWithLimitAndOffset()
     {
         $query = $this->queryBuilder
-            ->from('user')
-            ->limit(10)
-            ->offset(5)
+            ->from( 'user' )
+            ->limit( 10 )
+            ->offset( 5 )
             ->select()
             ->getQuery();
 
-        $this->assertEquals('SELECT * FROM `user` LIMIT 10 OFFSET 5;', $query->getSql());
+        $this->assertEquals( 'SELECT * FROM `user` LIMIT 10 OFFSET 5;', $query->getSql() );
     }
 
     public function testSelectQueryWithConditions()
     {
         $query = $this->queryBuilder
-            ->from('user')
-            ->where('id')->greaterThan(10)
-            ->orWhere('name')->equal('Mamadou')
+            ->from( 'user' )
+            ->where( 'id' )->greaterThan( 10 )
+            ->orWhere( 'name' )->equal( 'Mamadou' )
             ->select()
             ->getQuery();
 
@@ -73,7 +78,7 @@ class QueryBuilderTest extends TestCase
 
         $this->assertEquals(
             [
-                'cid'   => 10,
+                'cid' => 10,
                 'cname' => "Mamadou",
             ],
             $query->getParameters()
@@ -83,9 +88,9 @@ class QueryBuilderTest extends TestCase
     public function testUpdateQuery()
     {
         $query = $this->queryBuilder
-            ->from('user')
-            ->update(['name' => 'Mamadou'])
-            ->where('id')->equal(1)
+            ->from( 'user' )
+            ->update( ['name' => 'Mamadou'] )
+            ->where( 'id' )->equal( 1 )
             ->getQuery();
 
         $this->assertEquals(
@@ -96,7 +101,7 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals(
             [
                 'name' => "Mamadou",
-                'cid'  => 1,
+                'cid' => 1,
             ],
             $query->getParameters()
         );
@@ -105,8 +110,8 @@ class QueryBuilderTest extends TestCase
     public function testDeleteQuery()
     {
         $query = $this->queryBuilder
-            ->from('user')
-            ->where('id')->equal(1)
+            ->from( 'user' )
+            ->where( 'id' )->equal( 1 )
             ->delete()
             ->getQuery();
 
@@ -125,17 +130,17 @@ class QueryBuilderTest extends TestCase
 
     public function testShouldThrowAnExceptionOnCommit()
     {
-        $this->queryBuilder->setConnection(null);
-        $this->expectException(QueryBuilderException::class);
-        $this->queryBuilder->select()->from('users')->commit();
+        $this->queryBuilder->setConnection( null );
+        $this->expectException( QueryBuilderException::class );
+        $this->queryBuilder->select()->from( 'users' )->commit();
     }
 
     public function testCreateQuery()
     {
         $query = $this->queryBuilder->create()
-            ->table('user')
-            ->field('id')->int()->notNull()->autoIncrement()
-            ->field('username')->string()->default('mamadou')
+            ->table( 'user' )
+            ->field( 'id' )->int()->notNull()->autoIncrement()
+            ->field( 'username' )->string()->default( 'mamadou' )
             ->getQuery();
 
         $this->assertEquals(
@@ -155,11 +160,11 @@ class QueryBuilderTest extends TestCase
     public function testCanCommitQuery()
     {
         $process = $this->queryBuilder->create()
-            ->table('user')
-            ->field('id')->int()->notNull()->primaryKey()
-            ->field('username')->string()->notNull()
+            ->table( 'user' )
+            ->field( 'id' )->int()->notNull()->primaryKey()
+            ->field( 'username' )->string()->notNull()
             ->commit();
 
-        $this->assertTrue($process);
+        $this->assertTrue( $process );
     }
 }

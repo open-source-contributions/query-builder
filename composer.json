@@ -27,6 +27,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "mamadou-aly-sy/database-connection": "^1.0"
     }
 }
